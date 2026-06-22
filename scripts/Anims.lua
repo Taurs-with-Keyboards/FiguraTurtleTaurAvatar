@@ -1,8 +1,13 @@
 -- Required scripts
+require("lib.GSAnimBlend")
+require("lib.Molang")
 local parts = require("lib.PartsAPI")
 local sync  = require("lib.LetThatSyncFig")
 local lerp  = require("lib.LerpAPI")
 local pose  = require("scripts.Posing")
+
+-- Animations setup
+local anims = animations.Turtle
 
 -- Synced variables setup
 local armsMove = sync.new("AnimsArms", false):config()
@@ -33,8 +38,34 @@ end
 function events.TICK()
 	
 	-- Variables
+	local vel = player:getVelocity()
+	local yaw = player:getBodyYaw()
+	local dir = vec(math.sin(math.rad(-yaw)), 0, math.cos(math.rad(-yaw)))
 	local headRot = getOriginRot("HEAD")
+	
+	-- Directional velocity
+	local fbVel = vel:dot((dir.x_z):normalized())
+	local lrVel = vel:crossed(dir.x_z:normalized()).y
+	local udVel = vel.y
+	
+	-- Speed control
+	local moveSpeed = math.clamp((pose.climb and udVel or fbVel) * 10, -4, 4)
+	
+	-- Animation speeds
+	anims.walk:speed(moveSpeed)
+	
+	-- Animation variables
+	local walking = vel.xz:length() ~= 0
+	local moving  = vel:length() ~= 0
 	local canLean = true
+	
+	-- Animation states
+	local idle = not walking or (pose.climb and not moving)
+	local walk = walking or (pose.climb and moving)
+	
+	-- Animations
+	anims.idle:playing(idle)
+	anims.walk:playing(walk)
 	
 	-- Lean target
 	lean.target = canLean and headRot * vec(0.35, 0.5, 0.25) or 0
@@ -89,6 +120,19 @@ function events.RENDER(delta, context)
 	parts.group.Spyglass:offsetRot(headRot - lean.currPos)
 		:pos(pose.crouch and vec(0, -4, 0) or nil)
 	
+end
+
+-- GS Blending Setup
+local blendAnims = {
+	{ anim = anims.idle, ticks = {7,7} },
+	{ anim = anims.walk, ticks = {7,7} }
+}
+
+-- Apply GS Blending
+for _, blend in ipairs(blendAnims) do
+	if blend.anim ~= nil then
+		blend.anim:blendTime(table.unpack(blend.ticks)):blendCurve("easeOutQuad")
+	end
 end
 
 -- Host only instructions
