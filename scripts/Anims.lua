@@ -7,6 +7,20 @@ local pose  = require("scripts.Posing")
 -- Synced variables setup
 local armsMove = sync.new("AnimsArms", false):config()
 
+-- Lean setup
+local leanParts = {
+	parts.group.UpperBody,
+	parts.group.Neck
+}
+local leanOffsetParts = {
+	parts.group.Head,
+	parts.group.LeftArm,
+	parts.group.RightArm
+}
+
+-- Lean setup
+local lean = lerp.new(vec(0, 0, 0), 0.2)
+
 -- Arms setup
 local leftArmLerp  = lerp.new(armsMove.curr and 1 or 0, 0.5)
 local rightArmLerp = lerp.new(armsMove.curr and 1 or 0, 0.5)
@@ -17,6 +31,13 @@ local function getOriginRot(part)
 end
 
 function events.TICK()
+	
+	-- Variables
+	local headRot = getOriginRot("HEAD")
+	local canLean = true
+	
+	-- Lean target
+	lean.target = canLean and headRot * vec(0.35, 0.5, 0.25) or 0
 	
 	-- Arm variables
 	local handed = player:isLeftHanded()
@@ -43,6 +64,16 @@ end
 
 function events.RENDER(delta, context)
 	
+	-- Apply lean rotatons
+	for _, part in ipairs(leanParts) do
+		part:offsetRot(lean.currPos / #leanParts)
+	end
+	
+	-- Apply lean offsets
+	for _, part in ipairs(leanOffsetParts) do
+		part:offsetRot(-lean.currPos)
+	end
+	
 	-- Arm idle rotation
 	local idleTimer   = world.getTime(delta)
 	local firstPerson = context == "FIRST_PERSON"
@@ -55,7 +86,7 @@ function events.RENDER(delta, context)
 	-- Spyglass rotations
 	local headRot = getOriginRot("HEAD")
 	headRot.x = math.clamp(headRot.x, -90, 30)
-	parts.group.Spyglass:offsetRot(headRot)
+	parts.group.Spyglass:offsetRot(headRot - lean.currPos)
 		:pos(pose.crouch and vec(0, -4, 0) or nil)
 	
 end
