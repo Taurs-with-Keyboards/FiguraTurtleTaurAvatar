@@ -19,37 +19,38 @@ end
 function events.TICK()
 	
 	-- Arm variables
-	local handedness = player:isLeftHanded()
-	local mainL = not handedness and "OFF_HAND" or "MAIN_HAND"
-	local mainR = handedness and "OFF_HAND" or "MAIN_HAND"
+	local handed = player:isLeftHanded()
+	local mainL  = not handed and "OFF_HAND" or "MAIN_HAND"
+	local mainR  = handed and "OFF_HAND" or "MAIN_HAND"
 	local swingL = player:getSwingArm() == mainL
 	local swingR = player:getSwingArm() == mainR
-	local using = player:isUsingItem()
+	local using  = player:isUsingItem()
 	local active = player:getActiveHand()
-	local itemL = player:getHeldItem(not handedness)
-	local itemR = player:getHeldItem(handedness)
+	local itemL  = player:getHeldItem(not handed)
+	local itemR  = player:getHeldItem(handed)
 	local usingL = using and active == mainL and itemL:getUseAction()
 	local usingR = using and active == mainR and itemR:getUseAction()
-	local bow = (usingL or usingR or ""):find("BOW") or (itemL:getTag().Charged or itemR:getTag().Charged) == 1
+	local bow    = (usingL or usingR or ""):find("BOW") or (itemL:getTag().Charged or itemR:getTag().Charged) == 1
 	
 	-- Arms movement override
 	local armShouldMove = pose.swim or pose.elytra or pose.crawl or pose.climb
 	
 	-- Arms movement targets
-	leftArmLerp.target  = (armsMove.curr or armShouldMove or swingL or usingL or bow) and 0 or -1
-	rightArmLerp.target = (armsMove.curr or armShouldMove or swingR or usingR or bow) and 0 or -1
+	leftArmLerp.target  = (armsMove.curr or armShouldMove or swingL or usingL or bow) and 1 or 0
+	rightArmLerp.target = (armsMove.curr or armShouldMove or swingR or usingR or bow) and 1 or 0
 	
 end
 
 function events.RENDER(delta, context)
 	
 	-- Arm idle rotation
-	local idleTimer = world.getTime(delta)
-	local idleRot   = vec(math.deg(math.sin(idleTimer * 0.067) * 0.05), 0, math.deg(math.cos(idleTimer * 0.09) * 0.05 + 0.05))
+	local idleTimer   = world.getTime(delta)
+	local firstPerson = context == "FIRST_PERSON"
+	local idleRot     = not firstPerson and vec(math.deg(math.sin(idleTimer * 0.067) * 0.05), 0, math.deg(math.cos(idleTimer * 0.09) * 0.05 + 0.05)) or vec(0, 0, 5.75)
 	
-	-- Apply arm rotations
-	parts.group.LeftArm:offsetRot((getOriginRot("LEFT_ARM") + idleRot) * leftArmLerp.currPos)
-	parts.group.RightArm:offsetRot((getOriginRot("RIGHT_ARM") - idleRot) * rightArmLerp.currPos)
+	-- Control arm rotations
+	vanilla_model.LEFT_ARM:rot(math.lerp(-idleRot, getOriginRot("LEFT_ARM"),  leftArmLerp.currPos))
+	vanilla_model.RIGHT_ARM:rot(math.lerp(idleRot, getOriginRot("RIGHT_ARM"), rightArmLerp.currPos))
 	
 	-- Spyglass rotations
 	local headRot = getOriginRot("HEAD")
