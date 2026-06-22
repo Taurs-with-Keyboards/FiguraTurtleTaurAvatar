@@ -114,6 +114,12 @@ function events.RENDER(delta, context)
 	vanilla_model.LEFT_ARM:rot(math.lerp(-idleRot, getOriginRot("LEFT_ARM"),  leftArmLerp.currPos))
 	vanilla_model.RIGHT_ARM:rot(math.lerp(idleRot, getOriginRot("RIGHT_ARM"), rightArmLerp.currPos))
 	
+	-- Crouch offset
+	local bodyRot = getOriginRot("BODY", delta)
+	local crouchPos = vec(0, -math.sin(math.rad(bodyRot.x)) * 2, -math.sin(math.rad(bodyRot.x)) * 12)
+	parts.group.UpperBody:offsetPivot(crouchPos * 0.8):pos(-crouchPos.x_z + crouchPos._y_)
+	parts.group.Player:pos(crouchPos.x_z + crouchPos._y_ * 2)
+	
 	-- Spyglass rotations
 	local headRot = getOriginRot("HEAD")
 	headRot.x = math.clamp(headRot.x, -90, 30)
