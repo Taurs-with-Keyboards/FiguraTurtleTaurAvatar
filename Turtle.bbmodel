@@ -3630,6 +3630,52 @@
 			"autouv": 0,
 			"isOpen": false,
 			"primary_selected": false
+		},
+		{
+			"name": "FrontLeftGround",
+			"uuid": "a0540782-72ae-3912-3164-e2e3ccc91f80",
+			"export": true,
+			"locked": false,
+			"scope": 0,
+			"selected": false,
+			"_static": {
+				"properties": {},
+				"temp_data": {}
+			},
+			"origin": [-27.5, 3.5, -9],
+			"rotation": [0, 0, 0],
+			"color": 0,
+			"children": [],
+			"reset": false,
+			"shade": true,
+			"mirror_uv": false,
+			"visibility": true,
+			"autouv": 0,
+			"isOpen": false,
+			"primary_selected": false
+		},
+		{
+			"name": "FrontRightGround",
+			"uuid": "db86f6f9-73a0-8342-578f-9a2b13e721cc",
+			"export": true,
+			"locked": false,
+			"scope": 0,
+			"selected": false,
+			"_static": {
+				"properties": {},
+				"temp_data": {}
+			},
+			"origin": [27.5, 3.5, -9],
+			"rotation": [0, 0, 0],
+			"color": 0,
+			"children": [],
+			"reset": false,
+			"shade": true,
+			"mirror_uv": false,
+			"visibility": true,
+			"autouv": 0,
+			"isOpen": false,
+			"primary_selected": false
 		}
 	],
 	"outliner": [
@@ -3845,6 +3891,11 @@
 										"66e8884e-8754-2460-d093-baba783e16a6",
 										"904e61a8-2213-3b7a-ce5d-67b218c2a61d",
 										{
+											"uuid": "a0540782-72ae-3912-3164-e2e3ccc91f80",
+											"isOpen": false,
+											"children": []
+										},
+										{
 											"uuid": "1ed688ab-0f61-e0f4-d1f4-49296665b926",
 											"isOpen": false,
 											"children": ["bab49a8f-52db-7767-45c9-7f8c7cf38c80", "25d47e3b-78af-b8f5-352c-74204d740fe7"]
@@ -3865,6 +3916,11 @@
 									"children": [
 										"d295de5c-2a18-0eea-6702-2576e3bd704c",
 										"30e96275-4d87-cad3-cd61-d983e7aab48d",
+										{
+											"uuid": "db86f6f9-73a0-8342-578f-9a2b13e721cc",
+											"isOpen": false,
+											"children": []
+										},
 										{
 											"uuid": "f4bc9873-8a25-e19f-be17-0733d4727603",
 											"isOpen": false,
@@ -4547,6 +4603,18 @@
 					"type": "bone",
 					"rotation_global": false,
 					"quaternion_interpolation": false
+				},
+				"a0540782-72ae-3912-3164-e2e3ccc91f80": {
+					"name": "FrontLeftGround",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
+				},
+				"db86f6f9-73a0-8342-578f-9a2b13e721cc": {
+					"name": "FrontRightGround",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
 				}
 			}
 		},
@@ -5077,6 +5145,18 @@
 				},
 				"6f21b6a4-1d20-7dc5-9814-470355b7fd9f": {
 					"name": "ShellBelly",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
+				},
+				"a0540782-72ae-3912-3164-e2e3ccc91f80": {
+					"name": "FrontLeftGround",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
+				},
+				"db86f6f9-73a0-8342-578f-9a2b13e721cc": {
+					"name": "FrontRightGround",
 					"type": "bone",
 					"rotation_global": false,
 					"quaternion_interpolation": false
