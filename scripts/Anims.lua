@@ -57,15 +57,17 @@ function events.TICK()
 	-- Animation variables
 	local walking = vel.xz:length() ~= 0
 	local moving  = vel:length() ~= 0
-	local canLean = true
 	
 	-- Animation states
-	local idle = not walking or (pose.climb and not moving)
-	local walk = walking or (pose.climb and moving)
+	local idle    = not walking or (pose.climb and not moving)
+	local walk    = walking or (pose.climb and moving)
+	local sleep   = pose.sleep
+	local canLean = not sleep
 	
 	-- Animations
 	anims.idle:playing(idle)
 	anims.walk:playing(walk)
+	anims.sleep:playing(sleep)
 	
 	-- Lean target
 	lean.target = canLean and headRot * vec(0.35, 0.5, 0.25) or 0
