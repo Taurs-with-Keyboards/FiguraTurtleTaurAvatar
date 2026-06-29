@@ -12,6 +12,9 @@ local groundParts = parts:createTable(function(part) return part:getName():find(
 -- Stop script if ground parts could not be found
 if #groundParts == 0 then return end
 
+-- Animations setup
+local anims = animations.Turtle
+
 -- Setup groundParts table
 for k, i in ipairs(groundParts) do
 	
@@ -71,7 +74,7 @@ function events.TICK()
 	local inWater  = player:isInWater()
 	
 	-- Play footsteps based on placement
-	if onGround and not (inWater or player:getVehicle() or effects.cF) then
+	if onGround and not (inWater or player:getVehicle() or effects.cF or (anims.shaking:isPlaying() and vel:length() == 0)) then
 		
 		for _, flipper in ipairs(groundParts) do
 			

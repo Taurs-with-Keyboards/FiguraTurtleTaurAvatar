@@ -11,6 +11,13 @@ local anims = animations.Turtle
 
 -- Synced variables setup
 local armsMove = sync.new("AnimsArms", false):config()
+local isHiding = sync.new("AnimsHiding", 1):config()
+--[[
+	For hiding:
+	1 == not hiding
+	2 == hiding
+	3 == shaking
+--]]
 
 -- Lean setup
 local leanParts = {
@@ -57,17 +64,22 @@ function events.TICK()
 	-- Animation variables
 	local walking = vel.xz:length() ~= 0
 	local moving  = vel:length() ~= 0
+	local canLean = isHiding.curr == 1
 	
 	-- Animation states
 	local idle    = not walking or (pose.climb and not moving)
 	local walk    = walking or (pose.climb and moving)
 	local sleep   = pose.sleep
-	local canLean = not sleep
+	local hiding  = isHiding.curr >= 2
+	local shaking = isHiding.curr >= 3
+	local canLean = not (sleep or hiding)
 	
 	-- Animations
 	anims.idle:playing(idle)
 	anims.walk:playing(walk)
 	anims.sleep:playing(sleep)
+	anims.hiding:playing(hiding)
+	anims.shaking:playing(shaking)
 	
 	-- Lean target
 	lean.target = canLean and headRot * vec(0.35, 0.5, 0.25) or 0
@@ -118,7 +130,7 @@ function events.RENDER(delta, context)
 	
 	-- Crouch offset
 	local bodyRot = getOriginRot("BODY", delta)
-	local crouchPos = vec(0, -math.sin(math.rad(bodyRot.x)) * 2, -math.sin(math.rad(bodyRot.x)) * 12)
+	local crouchPos = not anims.hiding:isPlaying() and vec(0, -math.sin(math.rad(bodyRot.x)) * 2, -math.sin(math.rad(bodyRot.x)) * 12) or vec(0, 0, 0)
 	parts.group.UpperBody:offsetPivot(crouchPos * 0.8):pos(-crouchPos.x_z + crouchPos._y_)
 	parts.group.Player:pos(crouchPos.x_z + crouchPos._y_ * 2)
 	
@@ -132,8 +144,9 @@ end
 
 -- GS Blending Setup
 local blendAnims = {
-	{ anim = anims.idle, ticks = {7,7} },
-	{ anim = anims.walk, ticks = {7,7} }
+	{ anim = anims.idle,   ticks = {7,7}  },
+	{ anim = anims.walk,   ticks = {7,7}  },
+	{ anim = anims.hiding, ticks = {7,14} }
 }
 
 -- Apply GS Blending
@@ -167,6 +180,11 @@ if not pageExists then
 		:onLeftClick(function() wheel:descend(animsPage) end)
 end
 
+-- Set hiding style
+local function setHiding(i)
+	return math.clamp(isHiding.curr + i, 1, 3)
+end
+
 a.armsAct = animsPage:newAction()
 	:item("red_dye")
 	:toggleItem("rabbit_foot")
@@ -174,6 +192,11 @@ a.armsAct = animsPage:newAction()
 		armsMove:update(bool)
 	end)
 	:toggled(armsMove.curr)
+
+a.hidingAct = animsPage:newAction()
+	:onLeftClick(function() isHiding:update(setHiding(1)) end)
+	:onRightClick(function() isHiding:update(setHiding(-1)) end)
+	:onScroll(function(x) isHiding:update(setHiding(x), 10) end)
 
 -- Update actions
 function events.RENDER(delta, context)
@@ -194,6 +217,21 @@ function events.RENDER(delta, context)
 					{text = "Toggles the movement swing movement of the arms.\nActions are not effected.", color = c.secondary}
 				}
 			))
+		
+		a.hidingAct
+			:title(toJson(
+				{
+					"",
+					{text = "Play Hiding animation", bold = true, color = c.primary},
+					{text = "\n\nLeft and Right click to change intensity!", color = c.secondary}
+				}
+			))
+			:item(isHiding.curr ~= 1 and "turtle_helmet" or "scute")
+			:color(
+				isHiding.curr == 1 and vec(0, 0, 0)
+				or isHiding.curr == 2 and vec(1, 1, 0)
+				or isHiding.curr == 3 and vec(1, 0, 0)
+			)
 		
 		for _, act in pairs(a) do
 			act:hoverColor(c.hover):toggleColor(c.active)
