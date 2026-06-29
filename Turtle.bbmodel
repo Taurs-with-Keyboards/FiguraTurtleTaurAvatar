@@ -3676,6 +3676,29 @@
 			"autouv": 0,
 			"isOpen": false,
 			"primary_selected": false
+		},
+		{
+			"name": "Seat1",
+			"uuid": "33021b62-bac9-2412-9bf0-c1e77c740c6a",
+			"export": true,
+			"locked": false,
+			"scope": 0,
+			"selected": false,
+			"_static": {
+				"properties": {},
+				"temp_data": {}
+			},
+			"origin": [0, 17.25, -5],
+			"rotation": [0, 0, 0],
+			"color": 0,
+			"children": [],
+			"reset": false,
+			"shade": true,
+			"mirror_uv": false,
+			"visibility": true,
+			"autouv": 0,
+			"isOpen": false,
+			"primary_selected": false
 		}
 	],
 	"outliner": [
@@ -3875,6 +3898,11 @@
 									"uuid": "6f21b6a4-1d20-7dc5-9814-470355b7fd9f",
 									"isOpen": false,
 									"children": ["d82689bd-06dd-2497-f0b5-cc0d1dba8e0f", "2298a3c3-31b2-19a1-f6d7-f28b10597dd7"]
+								},
+								{
+									"uuid": "33021b62-bac9-2412-9bf0-c1e77c740c6a",
+									"isOpen": false,
+									"children": []
 								}
 							]
 						},
@@ -4615,6 +4643,12 @@
 					"type": "bone",
 					"rotation_global": false,
 					"quaternion_interpolation": false
+				},
+				"33021b62-bac9-2412-9bf0-c1e77c740c6a": {
+					"name": "Seat1",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
 				}
 			}
 		},
@@ -5160,6 +5194,12 @@
 					"type": "bone",
 					"rotation_global": false,
 					"quaternion_interpolation": false
+				},
+				"33021b62-bac9-2412-9bf0-c1e77c740c6a": {
+					"name": "Seat1",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
 				}
 			}
 		},
@@ -5604,6 +5644,12 @@
 				},
 				"db86f6f9-73a0-8342-578f-9a2b13e721cc": {
 					"name": "FrontRightGround",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
+				},
+				"33021b62-bac9-2412-9bf0-c1e77c740c6a": {
+					"name": "Seat1",
 					"type": "bone",
 					"rotation_global": false,
 					"quaternion_interpolation": false
@@ -6136,6 +6182,12 @@
 					"type": "bone",
 					"rotation_global": false,
 					"quaternion_interpolation": false
+				},
+				"33021b62-bac9-2412-9bf0-c1e77c740c6a": {
+					"name": "Seat1",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
 				}
 			}
 		},
@@ -6534,6 +6586,12 @@
 				},
 				"db86f6f9-73a0-8342-578f-9a2b13e721cc": {
 					"name": "FrontRightGround",
+					"type": "bone",
+					"rotation_global": false,
+					"quaternion_interpolation": false
+				},
+				"33021b62-bac9-2412-9bf0-c1e77c740c6a": {
+					"name": "Seat1",
 					"type": "bone",
 					"rotation_global": false,
 					"quaternion_interpolation": false
