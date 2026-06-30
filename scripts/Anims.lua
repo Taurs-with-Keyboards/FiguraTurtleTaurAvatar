@@ -1,10 +1,12 @@
 -- Required scripts
 require("lib.GSAnimBlend")
 require("lib.Molang")
-local parts = require("lib.PartsAPI")
-local sync  = require("lib.LetThatSyncFig")
-local lerp  = require("lib.LerpAPI")
-local pose  = require("scripts.Posing")
+local parts   = require("lib.PartsAPI")
+local sync    = require("lib.LetThatSyncFig")
+local lerp    = require("lib.LerpAPI")
+local ground  = require("lib.GroundCheck")
+local pose    = require("scripts.Posing")
+local effects = require("scripts.SyncedVariables")
 
 -- Animations setup
 local anims = animations.Turtle
@@ -48,7 +50,12 @@ function events.TICK()
 	local vel = player:getVelocity()
 	local yaw = player:getBodyYaw()
 	local dir = vec(math.sin(math.rad(-yaw)), 0, math.cos(math.rad(-yaw)))
-	local headRot = getOriginRot("HEAD")
+	local inWater    = player:isInWater()
+	local underwater = player:isUnderwater()
+	local walking    = vel.xz:length() ~= 0
+	local moving     = vel:length() ~= 0
+	local onGround   = ground()
+	local headRot    = getOriginRot("HEAD")
 	
 	-- Directional velocity
 	local fbVel = vel:dot((dir.x_z):normalized())
@@ -56,32 +63,46 @@ function events.TICK()
 	local udVel = vel.y
 	
 	-- Speed control
-	local moveSpeed = math.clamp((pose.climb and udVel or fbVel) * 10, -4, 4)
+	local moveSpeed = math.clamp((effects.cF and vel:length() or pose.climb and udVel or fbVel) * 10, -4, 4)
 	
 	-- Animation speeds
-	anims.walk:speed(moveSpeed)
+	anims.groundWalk:speed(moveSpeed)
+	anims.waterSwim:speed(moveSpeed)
+	anims.underwaterSwim:speed(moveSpeed * 0.75)
 	
 	-- Animation variables
-	local walking = vel.xz:length() ~= 0
-	local moving  = vel:length() ~= 0
-	local canLean = isHiding.curr == 1
+	local groundAnim     = (onGround or pose.climb) and not ((pose.swim and inWater) or pose.elytra or pose.spin)
+	local waterAnim      = (inWater or player:getVehicle()) and not (underwater or onGround or pose.elytra)
+	local underwaterAnim = (underwater or effects.cF) and (not onGround or pose.swim) and not pose.elytra
 	
 	-- Animation states
-	local idle    = not walking or (pose.climb and not moving)
-	local walk    = walking or (pose.climb and moving)
-	local sleep   = pose.sleep
-	local hiding  = isHiding.curr >= 2
-	local shaking = isHiding.curr >= 3
-	local canLean = not (sleep or hiding)
+	local groundIdle     = groundAnim and (not walking or (pose.climb and not moving))
+	local groundWalk     = groundAnim and (walking or (pose.climb and moving))
+	local waterIdle      = waterAnim and not walking
+	local waterSwim      = waterAnim and walking
+	local underwaterIdle = underwaterAnim and not moving
+	local underwaterSwim = underwaterAnim and moving
+	local swimPose       = pose.swim
+	local elytraPose     = pose.elytra
+	local sleep          = pose.sleep
+	local hiding         = isHiding.curr >= 2 and not (swimPose or elytraPose)
+	local shaking        = hiding and isHiding.curr >= 3
 	
 	-- Animations
-	anims.idle:playing(idle)
-	anims.walk:playing(walk)
+	anims.groundIdle:playing(groundIdle)
+	anims.groundWalk:playing(groundWalk)
+	anims.waterIdle:playing(waterIdle)
+	anims.waterSwim:playing(waterSwim)
+	anims.underwaterIdle:playing(underwaterIdle)
+	anims.underwaterSwim:playing(underwaterSwim)
+	anims.swimPose:playing(swimPose)
+	anims.elytraPose:playing(elytraPose)
 	anims.sleep:playing(sleep)
 	anims.hiding:playing(hiding)
 	anims.shaking:playing(shaking)
 	
 	-- Lean target
+	local canLean = not (sleep or hiding)
 	lean.target = canLean and headRot * vec(0.35, 0.5, 0.25) or 0
 	
 	-- Arm variables
@@ -144,15 +165,50 @@ end
 
 -- GS Blending Setup
 local blendAnims = {
-	{ anim = anims.idle,   ticks = {7,7}  },
-	{ anim = anims.walk,   ticks = {7,7}  },
-	{ anim = anims.hiding, ticks = {7,14} }
+	{
+		anim  = anims.groundIdle,
+		ticks = {7,7}
+	},
+	{
+		anim  = anims.groundWalk,
+		ticks = {7,7}
+	},
+	{
+		anim  = anims.waterIdle,
+		ticks = {7,7}
+	},
+	{
+		anim  = anims.waterSwim,
+		ticks = {7,7}
+	},
+	{
+		anim  = anims.underwaterIdle,
+		ticks = {7,7}
+	},
+	{
+		anim  = anims.underwaterSwim,
+		ticks = {7,7}
+	},
+	{
+		anim  = anims.swimPose,
+		ticks = {12,12},
+		type  = "linear"
+	},
+	{
+		anim  = anims.elytraPose,
+		ticks = {9,0},
+		type  = "linear"
+	},
+	{
+		anim  = anims.hiding,
+		ticks = {7,14}
+	}
 }
 
 -- Apply GS Blending
 for _, blend in ipairs(blendAnims) do
 	if blend.anim ~= nil then
-		blend.anim:blendTime(table.unpack(blend.ticks)):blendCurve("easeOutQuad")
+		blend.anim:blendTime(table.unpack(blend.ticks)):blendCurve(blend.type or "easeOutQuad")
 	end
 end
 
