@@ -10,6 +10,9 @@ local slim = sync.new("AvatarSlim", false):config()
 parts.group.Skull   :visible(true)
 parts.group.Portrait:visible(true)
 
+-- Set shadow size
+renderer:shadowRadius(1)
+
 -- Arm parts
 local defaultParts = parts:createTable(function(part) return part:getName():find("ArmDefault") end)
 local slimParts    = parts:createTable(function(part) return part:getName():find("ArmSlim")    end)
