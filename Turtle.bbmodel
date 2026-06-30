@@ -3922,7 +3922,7 @@
 				"properties": {},
 				"temp_data": {}
 			},
-			"origin": [-6, 17, -17],
+			"origin": [-12, 15, -13],
 			"rotation": [0, 0, 0],
 			"color": 0,
 			"children": [],
@@ -3945,7 +3945,7 @@
 				"properties": {},
 				"temp_data": {}
 			},
-			"origin": [6, 17, -17],
+			"origin": [12, 15, -13],
 			"rotation": [0, 0, 0],
 			"color": 0,
 			"children": [],
@@ -5348,16 +5348,6 @@
 													"uuid": "c692cfd9-7ffb-6a86-f61a-b8f944f56390",
 													"isOpen": false,
 													"children": []
-												},
-												{
-													"uuid": "29c6dfc0-a5d9-b167-e2c0-cb9ed0b69cba",
-													"isOpen": false,
-													"children": []
-												},
-												{
-													"uuid": "4d5fde92-582f-c263-9cfb-c18d9fdb7169",
-													"isOpen": false,
-													"children": []
 												}
 											]
 										},
@@ -5479,6 +5469,16 @@
 										},
 										{
 											"uuid": "33021b62-bac9-2412-9bf0-c1e77c740c6a",
+											"isOpen": false,
+											"children": []
+										},
+										{
+											"uuid": "29c6dfc0-a5d9-b167-e2c0-cb9ed0b69cba",
+											"isOpen": false,
+											"children": []
+										},
+										{
+											"uuid": "4d5fde92-582f-c263-9cfb-c18d9fdb7169",
 											"isOpen": false,
 											"children": []
 										}
