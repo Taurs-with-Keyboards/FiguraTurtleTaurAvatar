@@ -1,5 +1,5 @@
 # [Turtle Taur]((https://github.com/Taurs-with-Keyboards/FiguraTurtleTaurAvatar))
-### Version: 1.0.0
+### Version: 1.0.1
 A Figura Avatar template designed to give the user a customizable turtle lower body. 
 
 ### Authors:
