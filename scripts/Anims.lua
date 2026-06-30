@@ -44,6 +44,16 @@ local function getOriginRot(part)
 	return (vanilla_model[part]:getOriginRot() + 180) % 360 - 180
 end
 
+-- Body bounce
+local bodyBounce = lerp.new(0, 0.3, 0.15)
+local _onGround = true
+
+-- Flipper parts tables
+local flippers = {
+	frontLeft  = parts:createChain("FrontLeftFlipper"),
+	frontRight = parts:createChain("FrontRightFlipper")
+}
+
 function events.TICK()
 	
 	-- Variables
@@ -126,6 +136,36 @@ function events.TICK()
 	leftArmLerp.target  = (armsMove.curr or armShouldMove or swingL or usingL or bow) and 1 or 0
 	rightArmLerp.target = (armsMove.curr or armShouldMove or swingR or usingR or bow) and 1 or 0
 	
+	-- Set bounce target
+	if pose.crawl or pose.spin or effects.cF then
+		bodyBounce.target = 0
+	elseif not onGround then
+		bodyBounce.target = math.clamp(player:getVelocity().y, -0.5, 0.5) * 75
+	elseif onGround and not _onGround then
+		bodyBounce.target = -bodyBounce.target
+	end
+	
+	-- Bounce limits
+	if onGround and bodyBounce.currTick > 0 then
+		bodyBounce:bounce(0)
+	elseif bodyBounce.currTick < -25 then
+		bodyBounce:bounce(-25)
+	elseif bodyBounce.currTick > 35 then
+		bodyBounce:bounce(35)
+	end
+	
+	-- Stiffness and damping
+	if inWater then
+		bodyBounce:setStiff(0.1)
+		bodyBounce:setDamp(0.025)
+	else
+		bodyBounce:setStiff(0.3)
+		bodyBounce:setDamp(0.15)
+	end
+	
+	-- Store data
+	_onGround = onGround
+	
 end
 
 function events.RENDER(delta, context)
@@ -148,6 +188,15 @@ function events.RENDER(delta, context)
 	-- Control arm rotations
 	vanilla_model.LEFT_ARM:rot(math.lerp(-idleRot, getOriginRot("LEFT_ARM"),  leftArmLerp.currPos))
 	vanilla_model.RIGHT_ARM:rot(math.lerp(idleRot, getOriginRot("RIGHT_ARM"), rightArmLerp.currPos))
+	
+	-- Apply body bounce
+	parts.group.LowerBody:offsetRot(bodyBounce.currPos, 0, 0)
+	for k, v in pairs(flippers) do
+		local flipperRot = vec(0, 0, bodyBounce.currPos * (k:find("Right") and -1 or 1))
+		for _, part in ipairs(v) do
+			part:offsetRot(flipperRot)
+		end
+	end
 	
 	-- Crouch offset
 	local bodyRot = getOriginRot("BODY", delta)
