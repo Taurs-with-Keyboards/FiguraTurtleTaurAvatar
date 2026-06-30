@@ -5765,8 +5765,8 @@
 			"source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACinX6EAAAAZUlEQVR4AezVIRLAMBDDwEz//+hyk/Boyw5alpvvxD8A4gIcBjAgTsAE4gL4CZqACcQJmEBcAK9AbgJrPABLpHYzoNb45mXAEqndDKg1vnkZsERqNwNqjW9eBiyR2s2A1xu/5fsBAAD//9hBl9UAAAAGSURBVAMARHwAQf4kRDYAAAAASUVORK5CYII="
 		},
 		{
-			"name": "nacklace.png",
-			"relative_path": "textures/misc/nacklace.png",
+			"name": "necklace.png",
+			"relative_path": "textures/misc/necklace.png",
 			"folder": "block",
 			"namespace": "",
 			"id": "28",
