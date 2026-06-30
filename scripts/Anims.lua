@@ -94,6 +94,7 @@ function events.TICK()
 	local underwaterSwim = underwaterAnim and moving
 	local swimPose       = pose.swim
 	local elytraPose     = pose.elytra
+	local spin           = pose.spin
 	local sleep          = pose.sleep
 	local hiding         = isHiding.curr >= 2 and not (swimPose or elytraPose)
 	local shaking        = hiding and isHiding.curr >= 3
@@ -107,6 +108,7 @@ function events.TICK()
 	anims.underwaterSwim:playing(underwaterSwim)
 	anims.swimPose:playing(swimPose)
 	anims.elytraPose:playing(elytraPose)
+	anims.spin:playing(spin)
 	anims.sleep:playing(sleep)
 	anims.hiding:playing(hiding)
 	anims.shaking:playing(shaking)
