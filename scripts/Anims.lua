@@ -116,7 +116,7 @@ function events.TICK()
 	local spin           = pose.spin
 	local climb          = pose.climb
 	local sleep          = pose.sleep
-	local hiding         = isHiding.curr >= 2 and not (swimPose or elytraPose)
+	local hiding         = isHiding.curr >= 2 and not (swimPose or elytraPose or spin)
 	local shaking        = hiding and isHiding.curr >= 3
 	
 	-- Animations
