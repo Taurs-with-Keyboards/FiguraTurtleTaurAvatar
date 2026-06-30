@@ -1701,7 +1701,7 @@
 			"uuid": "82595479-9fed-bf0e-46a1-7171753176e3"
 		},
 		{
-			"name": "LOWER_LAYER",
+			"name": "JACKET",
 			"box_uv": false,
 			"render_order": "default",
 			"locked": false,
