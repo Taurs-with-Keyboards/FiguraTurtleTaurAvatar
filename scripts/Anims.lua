@@ -372,9 +372,9 @@ function events.RENDER(delta, context)
 			))
 			:item(isHiding.curr ~= 1 and "turtle_helmet" or "scute")
 			:color(
-				isHiding.curr == 1 and vec(0, 0, 0)
+				isHiding.curr == 3 and vec(1, 0, 0)
 				or isHiding.curr == 2 and vec(1, 1, 0)
-				or isHiding.curr == 3 and vec(1, 0, 0)
+				or isHiding.curr == 1 and nil
 			)
 		
 		for _, act in pairs(a) do
