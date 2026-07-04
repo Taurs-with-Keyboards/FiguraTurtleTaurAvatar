@@ -4,6 +4,7 @@ require("lib.Molang")
 local parts   = require("lib.PartsAPI")
 local sync    = require("lib.LetThatSyncFig")
 local lerp    = require("lib.LerpAPI")
+local origins = require("lib.OriginsAPI")
 local ground  = require("lib.GroundCheck")
 local pose    = require("scripts.Posing")
 local effects = require("scripts.SyncedVariables")
@@ -12,13 +13,18 @@ local effects = require("scripts.SyncedVariables")
 local anims = animations.Turtle
 
 -- Synced variables setup
-local armsMove = sync.new("AnimsArms", false):config()
-local isHiding = sync.new("AnimsHiding", 1):config()
+local armsMove  = sync.new("AnimsArms", false):config()
+local isHiding  = sync.new("AnimsHiding", 0):config()
+local isShaking = sync.new("AnimsShaking", 1):config()
 --[[
 	For hiding:
-	1 == not hiding
-	2 == hiding
-	3 == shaking
+		0 == not hiding
+		1 == partial hiding
+		2 == full hiding
+	For shaking:
+		0 == not shaking
+		1 == only when hiding
+		2 == shaking
 --]]
 
 -- Lean setup
@@ -73,6 +79,9 @@ local flippers = {
 	frontRight = parts:createChain("FrontRightFlipper")
 }
 
+-- Power data
+local hidePower = nil
+
 function events.TICK()
 	
 	-- Variables
@@ -85,6 +94,7 @@ function events.TICK()
 	local moving     = vel:length() ~= 0
 	local onGround   = ground()
 	local headRot    = getOriginRot("HEAD")
+	hidePower = origins.getPowerData(player)["turtletaur:shelled_resource"]
 	
 	-- Directional velocity
 	local fbVel = vel:dot((dir.x_z):normalized())
@@ -116,8 +126,10 @@ function events.TICK()
 	local spin           = pose.spin
 	local climb          = pose.climb
 	local sleep          = pose.sleep
-	local hiding         = isHiding.curr >= 2 and not (swimPose or elytraPose or spin)
-	local shaking        = hiding and isHiding.curr >= 3
+	local canHide        = not (swimPose or elytraPose or spin)
+	local partHiding     = canHide and (hidePower or isHiding.curr) == 1
+	local fullHiding     = canHide and (hidePower or isHiding.curr) == 2
+	local shaking        = (isShaking.curr == 1 and (partHiding or fullHiding)) or isShaking.curr == 2
 	
 	-- Animations
 	anims.groundIdle:playing(groundIdle)
@@ -131,11 +143,12 @@ function events.TICK()
 	anims.spin:playing(spin)
 	anims.climb:playing(climb)
 	anims.sleep:playing(sleep)
-	anims.hiding:playing(hiding)
+	anims.partHiding:playing(partHiding)
+	anims.fullHiding:playing(fullHiding)
 	anims.shaking:playing(shaking)
 	
 	-- Lean target
-	local canLean = not (sleep or hiding)
+	local canLean = not (sleep or partHiding or fullHiding)
 	lean.target = canLean and headRot * vec(0.35, 0.5, 0.25) or 0
 	
 	-- Arm variables
@@ -228,7 +241,7 @@ function events.RENDER(delta, context)
 	
 	-- Crouch offset
 	local bodyRot = getOriginRot("BODY", delta)
-	local crouchPos = not anims.hiding:isPlaying() and vec(0, -math.sin(math.rad(bodyRot.x)) * 2, -math.sin(math.rad(bodyRot.x)) * 12) or vec(0, 0, 0)
+	local crouchPos = not (anims.partHiding:isPlaying() or anims.fullHiding:isPlaying()) and vec(0, -math.sin(math.rad(bodyRot.x)) * 2, -math.sin(math.rad(bodyRot.x)) * 12) or vec(0, 0, 0)
 	parts.group.UpperBody:offsetPivot(crouchPos * 0.8):pos(-crouchPos.x_z + crouchPos._y_)
 	parts.group.Player:pos(crouchPos.x_z + crouchPos._y_ * 2)
 	
@@ -277,8 +290,12 @@ local blendAnims = {
 		type  = "linear"
 	},
 	{
-		anim  = anims.hiding,
+		anim  = anims.partHiding,
 		ticks = {7,14}
+	},
+	{
+		anim  = anims.fullHiding,
+		ticks = {14,14}
 	}
 }
 
@@ -299,7 +316,7 @@ local keybound = require("lib.Keybound")
 local hidingKeybind = keybound.new(
 	keybinds
 		:newKeybind("Hiding Animation", "key.keyboard.keypad.1")
-		:onPress(function() isHiding:update((isHiding.curr % 3) + 1) end),
+		:onPress(function() if hidePower then return end isHiding:update((isHiding.curr + 1) % 3) end),
 	"AnimHidingKeybind"
 )
 
@@ -325,8 +342,8 @@ if not pageExists then
 end
 
 -- Set hiding style
-local function setHiding(i)
-	return math.clamp(isHiding.curr + i, 1, 3)
+local function setIntensity(x, i)
+	return (x + i) % 3
 end
 
 a.armsAct = animsPage:newAction()
@@ -338,9 +355,14 @@ a.armsAct = animsPage:newAction()
 	:toggled(armsMove.curr)
 
 a.hidingAct = animsPage:newAction()
-	:onLeftClick(function() isHiding:update(setHiding(1)) end)
-	:onRightClick(function() isHiding:update(setHiding(-1)) end)
-	:onScroll(function(x) isHiding:update(setHiding(x), 10) end)
+	:onLeftClick(function() if hidePower then return end isHiding:update(setIntensity(isHiding.curr, 1)) end)
+	:onRightClick(function() if hidePower then return end isHiding:update(setIntensity(isHiding.curr, -1)) end)
+	:onScroll(function(x) if hidePower then return end isHiding:update(setIntensity(isHiding.curr, x), 10) end)
+
+a.shakingAct = animsPage:newAction()
+	:onLeftClick(function() isShaking:update(setIntensity(isShaking.curr, 1)) end)
+	:onRightClick(function() isShaking:update(setIntensity(isShaking.curr, -1)) end)
+	:onScroll(function(x) isShaking:update(setIntensity(isShaking.curr, x), 10) end)
 
 -- Update actions
 function events.RENDER(delta, context)
@@ -367,14 +389,50 @@ function events.RENDER(delta, context)
 				{
 					"",
 					{text = "Play Hiding animation", bold = true, color = c.primary},
-					{text = "\n\nLeft and Right click to change intensity!", color = c.secondary}
+					{text = "\n\nLeft and Right click to change intensity!", color = c.secondary},
+					{text = "\n\nCurrent intensity: ", bold = true, color = c.secondary},
+					{
+						text = hidePower and "Overwritten by origin power!"
+							or isHiding.curr == 2 and "Full"
+							or isHiding.curr == 1 and "Partial"
+							or "None",
+						color = hidePower and "gold"
+							or isHiding.curr == 2 and "red"
+							or isHiding.curr == 1 and "yellow"
+							or "white"
+					}
 				}
 			))
-			:item(isHiding.curr ~= 1 and "turtle_helmet" or "scute")
+			:item(isHiding.curr ~= 0 and "turtle_helmet" or "scute")
 			:color(
-				isHiding.curr == 3 and vec(1, 0, 0)
-				or isHiding.curr == 2 and vec(1, 1, 0)
-				or isHiding.curr == 1 and nil
+				hidePower and vec(1, 0.5, 0) or
+				isHiding.curr == 2 and vec(1, 0, 0) or
+				isHiding.curr == 1 and vec(1, 1, 0) or
+				nil
+			)
+			
+		a.shakingAct
+			:title(toJson(
+				{
+					"",
+					{text = "Play Shaking animation", bold = true, color = c.primary},
+					{text = "\n\nLeft and Right click to change intensity!", color = c.secondary},
+					{text = "\n\nCurrent intensity: ", bold = true, color = c.secondary},
+					{
+						text = isShaking.curr == 2 and "Always"
+							or isShaking.curr == 1 and "Only When Hiding"
+							or "None",
+						color = isShaking.curr == 2 and "red"
+							or isShaking.curr == 1 and "yellow"
+							or "white"
+					}
+				}
+			))
+			:item(isShaking.curr ~= 0 and "sculk_sensor" or "cut_sandstone_slab")
+			:color(
+				isShaking.curr == 2 and vec(1, 0, 0) or
+				isShaking.curr == 1 and vec(1, 1, 0) or
+				nil
 			)
 		
 		for _, act in pairs(a) do

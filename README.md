@@ -6,6 +6,7 @@ A Figura Avatar template designed to give the user a customizable turtle lower b
 - Total
 
 ### Credits:
+- Psycho Breadstick
 - Irri
 - ✦Starry Crystal✦
 - Jimmy
@@ -17,7 +18,7 @@ A Figura Avatar template designed to give the user a customizable turtle lower b
 - Grandpa Scout (GSAnimBlend, GSCarrier)
 - Katt (KattArmor)
 - 4P5 (GroundCheck)
-- Manuel (Molang Conversions)
+- Manuel (Molang Conversions, OriginsAPI)
 - Auria (Molang Conversions)
 
 ## Features
