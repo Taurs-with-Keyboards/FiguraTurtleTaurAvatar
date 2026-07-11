@@ -18,3 +18,17 @@ carrier.vehicle.newSeat("Seat1", parts.group.Seat1, {
 	priority = 1,
 	tags = {["gscarrier:flat"] = true}
 })
+
+function events.TICK()
+	
+	-- Variables
+	local vehicle = player:getVehicle() or false
+	local type    = vehicle and vehicle:getType() or ""
+	
+	-- Vehicle renders/part toggle
+	renderer:setRenderVehicle(not type:find("boat"))
+	
+	-- Redirect all passengers to pivots if vehicle is a boat
+	carrier.vehicle.setRedirect(type:find("boat"))
+	
+end

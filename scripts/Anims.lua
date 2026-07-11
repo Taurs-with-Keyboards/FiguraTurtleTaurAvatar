@@ -101,6 +101,7 @@ function events.TICK()
 	local walking    = vel.xz:length() ~= 0
 	local moving     = vel:length() ~= 0
 	local onGround   = ground()
+	local vehicle    = player:getVehicle()
 	local headRot    = getOriginRot("HEAD")
 	hidePower = origins.getPowerData(player)["turtletaur:shelled_resource"]
 	
@@ -119,7 +120,7 @@ function events.TICK()
 	
 	-- Animation variables
 	local groundAnim     = (onGround or pose.climb) and not ((pose.swim and inWater) or pose.elytra or pose.spin)
-	local waterAnim      = (inWater or player:getVehicle()) and not (underwater or onGround or pose.elytra)
+	local waterAnim      = (inWater or vehicle) and not (underwater or onGround or pose.elytra)
 	local underwaterAnim = (underwater or effects.cF) and (not onGround or pose.swim) and not pose.elytra
 	
 	-- Animation states
@@ -134,7 +135,7 @@ function events.TICK()
 	local spin           = pose.spin
 	local climb          = pose.climb
 	local sleep          = pose.sleep
-	local canHide        = not (swimPose or elytraPose or spin)
+	local canHide        = not (swimPose or elytraPose or spin or vehicle)
 	local partHiding     = canHide and (hidePower or isHiding.curr) == 1
 	local fullHiding     = canHide and (hidePower or isHiding.curr) == 2
 	local shaking        = (isShaking.curr == 1 and (partHiding or fullHiding)) or isShaking.curr == 2
