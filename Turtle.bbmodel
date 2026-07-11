@@ -13862,9 +13862,9 @@
 							"channel": "rotation",
 							"data_points": [
 								{
-									"x": "70 - vanilla_model.HEAD:getOriginRot().x * 0.25",
+									"x": "70 - v.head.x * 0.25",
 									"y": "0",
-									"z": "vanilla_model.HEAD:getOriginRot().y * 0.75"
+									"z": "v.head.y * 0.75"
 								}
 							],
 							"uuid": "fae41404-f9a7-d137-0227-de281fb65f4e",
@@ -14026,7 +14026,7 @@
 							"channel": "rotation",
 							"data_points": [
 								{
-									"x": "145\n+ (-vanilla_model.LEFT_ARM:getOriginRot().x * 0.75)\n+ (15 * (player:isCrouching() and 1 or 0))",
+									"x": "145\n+ (-v.lArm.x * 0.75)\n+ (15 * (player:isCrouching() and 1 or 0))",
 									"y": "0",
 									"z": "0"
 								}
@@ -14072,7 +14072,7 @@
 							"channel": "rotation",
 							"data_points": [
 								{
-									"x": "145\n+ (-vanilla_model.RIGHT_ARM:getOriginRot().x * 0.75)\n+ (15 * (player:isCrouching() and 1 or 0))",
+									"x": "145\n+ (-v.rArm.x * 0.75)\n+ (15 * (player:isCrouching() and 1 or 0))",
 									"y": "0",
 									"z": "0"
 								}
@@ -14118,9 +14118,9 @@
 							"channel": "rotation",
 							"data_points": [
 								{
-									"x": "70 - vanilla_model.HEAD:getOriginRot().x * 0.25",
+									"x": "70 - v.head.x * 0.25",
 									"y": "0",
-									"z": "vanilla_model.HEAD:getOriginRot().y * 0.75"
+									"z": "v.head.y * 0.75"
 								}
 							],
 							"uuid": "c3a47d2b-992f-b291-ea65-338f42634939",
@@ -14517,9 +14517,9 @@
 							"channel": "rotation",
 							"data_points": [
 								{
-									"x": "70 - vanilla_model.HEAD:getOriginRot().x * 0.25",
+									"x": "70 - v.head.x * 0.25",
 									"y": "0",
-									"z": "vanilla_model.HEAD:getOriginRot().y * 0.75"
+									"z": "v.head.y * 0.75"
 								}
 							],
 							"uuid": "fae41404-f9a7-d137-0227-de281fb65f4e",
@@ -14733,9 +14733,9 @@
 							"channel": "rotation",
 							"data_points": [
 								{
-									"x": "70 - vanilla_model.HEAD:getOriginRot().x * 0.25",
+									"x": "70 - v.head.x * 0.25",
 									"y": "0",
-									"z": "vanilla_model.HEAD:getOriginRot().y * 0.75"
+									"z": "v.head.y * 0.75"
 								}
 							],
 							"uuid": "c3a47d2b-992f-b291-ea65-338f42634939",

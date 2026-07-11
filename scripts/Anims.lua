@@ -27,6 +27,14 @@ local isShaking = sync.new("AnimsShaking", 1):config()
 		2 == shaking
 --]]
 
+-- Table setup
+v = {}
+
+-- Animation variables
+v.head = vec(0, 0, 0)
+v.lArm = vec(0, 0, 0)
+v.rArm = vec(0, 0, 0)
+
 -- Lean setup
 local leanParts = {
 	parts.group.UpperBody,
@@ -205,6 +213,11 @@ function events.TICK()
 end
 
 function events.RENDER(delta, context)
+	
+	-- Store animation variables
+	v.head = getOriginRot("HEAD", delta)
+	v.lArm = getOriginRot("LEFT_ARM", delta)
+	v.rArm = getOriginRot("RIGHT_ARM", delta)
 	
 	-- Apply lean rotatons
 	for _, part in ipairs(leanParts) do
