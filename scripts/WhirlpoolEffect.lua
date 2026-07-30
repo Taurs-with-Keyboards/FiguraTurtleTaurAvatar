@@ -52,7 +52,7 @@ local bubblesSound = bubbles:addFunc(function()
 end)
 
 -- Required scripts
-local s, wheel, c = pcall(require, "scripts.ActionWheel")
+local s, pageNav, c = pcall(require, "scripts.ActionWheel")
 if not s then return end -- Kills script early if ActionWheel.lua isnt found
 
 -- Page
