@@ -335,7 +335,7 @@ local hidingKeybind = keybound.new(
 )
 
 -- Required script
-local s, pageNav, c = pcall(require, "scripts.ActionWheel")
+local s, pageNav, acts, c = pcall(require, "scripts.ActionWheel")
 if not s then return end -- Kills script early if ActionWheel.lua isnt found
 
 -- Check for if page already exists
@@ -345,12 +345,9 @@ local pageExists = action_wheel:getPage("Anims")
 local parentPage = action_wheel:getPage("Main")
 local animsPage  = pageExists or action_wheel:newPage("Anims")
 
--- Actions table setup
-local a = {}
-
 -- Actions
 if not pageExists then
-	a.pageAct = parentPage:newAction()
+	acts.animsPage = parentPage:newAction()
 		:item("jukebox")
 		:onLeftClick(function() pageNav.descend(animsPage) end)
 end
@@ -360,7 +357,7 @@ local function setIntensity(x, i)
 	return (x + i) % 3
 end
 
-a.armsAct = animsPage:newAction()
+acts.animsArmsToggle = animsPage:newAction()
 	:item("red_dye")
 	:toggleItem("rabbit_foot")
 	:onToggle(function(bool)
@@ -368,12 +365,12 @@ a.armsAct = animsPage:newAction()
 	end)
 	:toggled(armsMove.curr)
 
-a.hidingAct = animsPage:newAction()
+acts.animsHidingStyle = animsPage:newAction()
 	:onLeftClick(function() if hidePower then return end isHiding:update(setIntensity(isHiding.curr, 1)) end)
 	:onRightClick(function() if hidePower then return end isHiding:update(setIntensity(isHiding.curr, -1)) end)
 	:onScroll(function(x) if hidePower then return end isHiding:update(setIntensity(isHiding.curr, x), 10) end)
 
-a.shakingAct = animsPage:newAction()
+acts.animsShakingStyle = animsPage:newAction()
 	:onLeftClick(function() isShaking:update(setIntensity(isShaking.curr, 1)) end)
 	:onRightClick(function() isShaking:update(setIntensity(isShaking.curr, -1)) end)
 	:onScroll(function(x) isShaking:update(setIntensity(isShaking.curr, x), 10) end)
@@ -382,14 +379,15 @@ a.shakingAct = animsPage:newAction()
 function events.RENDER(delta, context)
 	
 	if action_wheel:isEnabled() then
-		if a.pageAct then
-			a.pageAct
+		if acts.animsPage then
+			acts.animsPage
 				:title(toJson(
 					{text = "Animation Settings", bold = true, color = c.primary}
 				))
+				:hoverColor(c.hover)
 		end
 		
-		a.armsAct
+		acts.animsArmsToggle
 			:title(toJson(
 				{
 					"",
@@ -397,8 +395,10 @@ function events.RENDER(delta, context)
 					{text = "Toggles the movement swing movement of the arms.\nActions are not effected.", color = c.secondary}
 				}
 			))
+			:hoverColor(c.hover)
+			:toggleColor(c.active)
 		
-		a.hidingAct
+		acts.animsHidingStyle
 			:title(toJson(
 				{
 					"",
@@ -424,8 +424,9 @@ function events.RENDER(delta, context)
 				isHiding.curr == 1 and vec(1, 1, 0) or
 				nil
 			)
+			:hoverColor(c.hover)
 			
-		a.shakingAct
+		acts.animsShakingStyle
 			:title(toJson(
 				{
 					"",
@@ -448,10 +449,7 @@ function events.RENDER(delta, context)
 				isShaking.curr == 1 and vec(1, 1, 0) or
 				nil
 			)
-		
-		for _, act in pairs(a) do
-			act:hoverColor(c.hover):toggleColor(c.active)
-		end
+			:hoverColor(c.hover)
 		
 	end
 	

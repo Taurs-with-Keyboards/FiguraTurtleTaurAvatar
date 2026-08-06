@@ -52,14 +52,11 @@ local bubblesSound = bubbles:addFunc(function()
 end)
 
 -- Required scripts
-local s, pageNav, c = pcall(require, "scripts.ActionWheel")
+local s, pageNav, acts, c = pcall(require, "scripts.ActionWheel")
 if not s then return end -- Kills script early if ActionWheel.lua isnt found
 
 -- Page
 local parentPage = action_wheel:getPage("Turtle") or action_wheel:getPage("Main")
-
--- Actions table setup
-local a = {}
 
 -- Set tail type
 local function setWhirlpoolBubbles(x)
@@ -67,7 +64,7 @@ local function setWhirlpoolBubbles(x)
 end
 
 -- Action
-a.bubbleAct = parentPage:newAction()
+acts.bubbleStyle = parentPage:newAction()
 	:onLeftClick(function() bubbles:update(setWhirlpoolBubbles(1)) end)
 	:onRightClick(function() bubbles:update(setWhirlpoolBubbles(-1)) end)
 	:onScroll(function(x) bubbles:update(setWhirlpoolBubbles(x), 20) end)
@@ -95,7 +92,7 @@ function events.RENDER(delta, context)
 	if action_wheel:isEnabled() then
 		
 		local actionSetup = BubbleInfo[bubbles.curr]
-		a.bubbleAct
+		acts.bubbleStyle
 			:title(toJson(
 				{
 					"",
@@ -107,12 +104,9 @@ function events.RENDER(delta, context)
 					{text = actionSetup.title.text, color = c.secondary}
 				}
 			))
-			:color(actionSetup.color or c.active)
 			:item(actionSetup.item)
-		
-		for _, act in pairs(a) do
-			act:hoverColor(c.hover)
-		end
+			:color(actionSetup.color or c.active)
+			:hoverColor(c.hover)
 		
 	end
 	
