@@ -335,7 +335,7 @@ local hidingKeybind = keybound.new(
 )
 
 -- Required script
-local s, pageNav, acts, c = pcall(require, "scripts.ActionWheel")
+local s, pageNav, acts, colors = pcall(require, "scripts.ActionWheel")
 if not s then return end -- Kills script early if ActionWheel.lua isnt found
 
 -- Check for if page already exists
@@ -382,29 +382,29 @@ function events.RENDER(delta, context)
 		if acts.animsPage then
 			acts.animsPage
 				:title(toJson(
-					{text = "Animation Settings", bold = true, color = c.primary}
+					{text = "Animation Settings", bold = true, color = colors.primary}
 				))
-				:hoverColor(c.hover)
+				:hoverColor(colors.hover)
 		end
 		
 		acts.animsArmsToggle
 			:title(toJson(
 				{
 					"",
-					{text = "Arm Movement Toggle\n\n", bold = true, color = c.primary},
-					{text = "Toggles the movement swing movement of the arms.\nActions are not effected.", color = c.secondary}
+					{text = "Arm Movement Toggle\n\n", bold = true, color = colors.primary},
+					{text = "Toggles the movement swing movement of the arms.\nActions are not effected.", color = colors.secondary}
 				}
 			))
-			:hoverColor(c.hover)
-			:toggleColor(c.active)
+			:hoverColor(colors.hover)
+			:toggleColor(colors.active)
 		
 		acts.animsHidingStyle
 			:title(toJson(
 				{
 					"",
-					{text = "Play Hiding animation", bold = true, color = c.primary},
-					{text = "\n\nLeft and Right click to change intensity!", color = c.secondary},
-					{text = "\n\nCurrent intensity: ", bold = true, color = c.secondary},
+					{text = "Play Hiding animation", bold = true, color = colors.primary},
+					{text = "\n\nLeft and Right click to change intensity!", color = colors.secondary},
+					{text = "\n\nCurrent intensity: ", bold = true, color = colors.secondary},
 					{
 						text = hidePower and "Overwritten by origin power!"
 							or isHiding.curr == 2 and "Full"
@@ -424,15 +424,15 @@ function events.RENDER(delta, context)
 				isHiding.curr == 1 and vec(1, 1, 0) or
 				nil
 			)
-			:hoverColor(c.hover)
+			:hoverColor(colors.hover)
 			
 		acts.animsShakingStyle
 			:title(toJson(
 				{
 					"",
-					{text = "Play Shaking animation", bold = true, color = c.primary},
-					{text = "\n\nLeft and Right click to change intensity!", color = c.secondary},
-					{text = "\n\nCurrent intensity: ", bold = true, color = c.secondary},
+					{text = "Play Shaking animation", bold = true, color = colors.primary},
+					{text = "\n\nLeft and Right click to change intensity!", color = colors.secondary},
+					{text = "\n\nCurrent intensity: ", bold = true, color = colors.secondary},
 					{
 						text = isShaking.curr == 2 and "Always"
 							or isShaking.curr == 1 and "Only When Hiding"
@@ -449,7 +449,7 @@ function events.RENDER(delta, context)
 				isShaking.curr == 1 and vec(1, 1, 0) or
 				nil
 			)
-			:hoverColor(c.hover)
+			:hoverColor(colors.hover)
 		
 	end
 	
